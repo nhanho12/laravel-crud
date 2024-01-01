@@ -1,3 +1,4 @@
+@include('common/taglib')
 <header class="sticky-top shadow">
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
@@ -27,7 +28,7 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
+            <a class="nav-link" href="{{ route('user-post') }}">User</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Contact</a>
@@ -40,7 +41,7 @@
           <a href="{{ route('logout') }}">Logout</a>
         </p>
         @else
-        <p class="text-danger">Please login!</p>
+        <p class="text-danger">Please <a href="{{ route('login') }}">login!</a> </p>
         @endif
       </div>
     </div>

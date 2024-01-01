@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminController;
 
+use App\Mail\MailPostCreated;
 use App\Models\Post;
 use Carbon\Carbon;
 use Exception;
@@ -9,6 +10,7 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -18,7 +20,7 @@ class PostController extends Controller
     public function getAllPostData()
     {
         $posts = Post::with('author')->get();
-        Session::put('posts', $posts); 
+        Session::put('posts', $posts);
         return view('admin.admin-post', ['posts' => $posts]);
     }
 
@@ -41,7 +43,7 @@ class PostController extends Controller
                     $imageUrl = 'images/' . $imageName;
                     $post->image = $imageUrl;
                 }
-             
+
                 //get userId from session for author
                 $userId = session('user')->id;
                 if ($userId) {
@@ -50,6 +52,10 @@ class PostController extends Controller
                     $post->author_id = null;
                 }
                 $post->save();
+
+                //send mail to admin
+                $recipientEmail = 'hodanhnhan1166@gmail.com';
+                Mail::to($recipientEmail)->send(new MailPostCreated());
                 return redirect('/admin')->with('message', 'Post has been created!');
             }
         } catch (Exception $e) {
@@ -92,8 +98,8 @@ class PostController extends Controller
         $post->content = $request->input('content');
         $post->tags = $request->input('tag');
 
-         // handle image
-         if ($request->hasFile('image') && $request->file('image')->isValid()) {
+        // handle image
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);

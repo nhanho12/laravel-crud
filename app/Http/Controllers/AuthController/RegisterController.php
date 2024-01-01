@@ -21,7 +21,7 @@ class RegisterController extends Controller
                 $user->password = bcrypt($data['password']);
                 $user->address = $data['address'];
                 $user->phone_number = $data['phone-number'];
-                $user->role = 'USER';
+                $user->role = 'ADMIN';
                 $user->save();
                 return redirect('/login')->with('message', 'Register successfully, sign in to continue!');
             }

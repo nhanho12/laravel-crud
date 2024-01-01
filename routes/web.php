@@ -3,6 +3,8 @@
 use App\Http\Controllers\AdminController\PostController;
 use App\Http\Controllers\AuthController\LoginController;
 use App\Http\Controllers\AuthController\RegisterController;
+use App\Http\Controllers\UserController\PostCreatedController;
+use App\Http\Controllers\UserController\UserPostController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 //get homepage UI
 Route::get('/', function () {
-    return view('index');
+    // return view('common.mail-post-created');
 });
 
 //get Login UI
@@ -36,15 +38,32 @@ Route::get('/register', function () {
 //handle register 
 Route::post('/register', [RegisterController::class, 'handleFormRegister'])->name('form-register');
 
-//get admin UI and display all post's data
-Route::get('/admin', [PostController::class, 'getAllPostData'])->name('admin-post');
-//create post 
-Route::post('/admin/create-post', [PostController::class, 'createPost'])->name('create-post');
+Route::prefix('/admin')->middleware(['admin'])->group(function () {
+    //get admin UI and display all post's data
+    Route::get('/', [PostController::class, 'getAllPostData'])->name('admin-post');
+    //create post 
+    Route::post('/create-post', [PostController::class, 'createPost'])->name('admin-create-post');
 
-//delete post by ID 
-Route::get('/admin/delete-post/{id}', [PostController::class, 'deletePost'])->name('delete-post');
+    //delete post by ID 
+    Route::get('/delete-post/{id}', [PostController::class, 'deletePost'])->name('admin-delete-post');
 
-//edit and update by ID
-Route::get('/admin/edit-post/{id}', [PostController::class, 'editPost'])->name('edit-post');
-Route::post('/admin/update-post/{id}', [PostController::class, 'updatePost'])->name('update-post');
+    //edit and update by ID
+    Route::get('/edit-post/{id}', [PostController::class, 'editPost'])->name('admin-edit-post');
+    Route::post('/update-post/{id}', [PostController::class, 'updatePost'])->name('admin-update-post');
+});
 
+//----
+//user
+Route::prefix('/user')->group(function () {
+    //get user UI and display all post's data
+    Route::get('/', [UserPostController::class, 'getAllPostData'])->name('user-post');
+    //create post
+    Route::post('/create-post', [UserPostController::class, 'createPost'])->name('user-create-post');
+
+    //delete post by ID 
+    Route::get('/delete-post/{id}', [PostController::class, 'deletePost'])->name('user-delete-post');
+
+    //edit and update by ID
+    Route::get('/edit-post/{id}', [PostController::class, 'editPost'])->name('user-edit-post');
+    Route::post('/update-post/{id}', [PostController::class, 'updatePost'])->name('user-update-post');
+});

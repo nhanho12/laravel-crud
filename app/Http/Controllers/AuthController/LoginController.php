@@ -13,27 +13,34 @@ class LoginController extends Controller
 {
     public function handleFormLogin(Request $request)
     {
-        $username = $request->input('username');
-        $password = $request->input('password');
-
-        $user = User::where('username', $username)->first();
-        if (!empty($user)) {
-            if (Hash::check($password, $user->password)) {
-                return redirect('/admin')->with([
-                    'message' => 'Login successfully!',
-                    $request->session()->put('user', $user)
-                ]);
-            } else {
-                return redirect()->back()->with('message', 'Wrong credential, try again!');
-            }
-        } else {
+        $credentials = $request->only('username', 'password');
+        $user = User::where('username', $credentials['username'])->first();
+    
+        if (!$user) {
             return redirect()->back()->with('message', 'Username does not exist!, try again!');
         }
+    
+        if (!Hash::check($credentials['password'], $user->password)) {
+            return redirect()->back()->with('message', 'Wrong credential, try again!');
+        }
+    
+        if (Auth::attempt($credentials)) {
+            $request->session()->put('user', $user);
+    
+            if ($user->role === 'ADMIN') {
+                return redirect('/admin')->with('message', 'Login successfully!');
+            }
+    
+            return redirect('/user')->with('message', 'Login successfully!');
+        }
+    
+        return redirect()->back()->with('message', 'Invalid credentials, try again!');
     }
+    
 
     public function handleFormLogout()
     {
-        Session::forget('user');
+        Session::flush();
         return redirect('/login');
     }
 }

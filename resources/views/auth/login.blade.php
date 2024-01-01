@@ -19,11 +19,11 @@
                         <form method="POST" action="{{ route('form-login') }}">
                             @csrf
                             <div class="form-floating mb-3">
-                                <input type="text" name="username" class="form-control" id="floatingInput" placeholder="name@example.com">
+                                <input type="text" name="username" class="form-control" id="floatingInput" required>
                                 <label for="floatingInput">Username</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+                                <input type="password" name="password" class="form-control" id="floatingPassword" required>
                                 <label for="floatingPassword">Password</label>
                             </div>
 
