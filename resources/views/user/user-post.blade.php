@@ -33,6 +33,52 @@
                                 </div>
                                 <div class="card-footer">
                                     <a href="{{ $post->id }}" class="btn btn-primary">Read More</a>
+                                    <a href="#" class="bi bi-pencil-square" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal-{{ $post->id }}" style="font-size: 24px;color: #000"></a>
+                                    <!-- modal update -->
+                                    <div class="modal fade" id="updateModal-{{ $post->id }}" tabindex="-1" role="dialog"
+                                        aria-labelledby="updateModalLabel-{{ $post->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="updatePostModalLabel">Update post</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="updatePostForm-{{ $post->id }}" action="{{ route('user-update-post', ['id' => $post->id]) }}" method="POST"
+                                                        enctype="multipart/form-data">
+                                                        @csrf
+                                                        {{-- @method('PUT') --}}
+                                                        <div class="mb-3">
+                                                            <label for="postTitle" class="form-label">Title</label>
+                                                            <input value="{{ $post->title }}" type="text" name="title"
+                                                                class="form-control" id="postTitle" name="title">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="postContent" class="form-label">Content</label>
+                                                            <textarea class="form-control" name="content" id="postContent" name="content" rows="5">{{ $post->content }}</textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="postContent" class="form-label">Hashtag</label>
+                                                            <input value="{{ $post->tags }}" type="text" name="tag"
+                                                                class="form-control" id="postTitle" name="tag">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="postContent" class="form-label">Image</label>
+                                                            <input type="file" name="image" class="form-control"
+                                                                id="postTitle" name="postTitle" accept="image/*">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <img src="{{ URL::to($post->image) }}" alt="post image"
+                                                                width="180px" height="180px">
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

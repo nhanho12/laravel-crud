@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\UserController\UserPostController;
+use App\Http\Controllers\UserController\UserRestController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

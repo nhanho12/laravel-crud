@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\UserController;
 
+use App\Events\PostProcessed;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Redis;
 use App\Jobs\ProcessSendEmail;
 use App\Mail\MailPostCreated;
 use App\Mail\PostCreated;
 use App\Models\Post;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,6 +20,7 @@ use Illuminate\Support\Facades\Session as FacadesSession;
 
 class UserPostController extends Controller
 {
+
     public function getAllPostData()
     {
         $posts = Post::with('author')->get();
@@ -54,8 +58,8 @@ class UserPostController extends Controller
                 $post->save();
 
                 //send email to admin if post created successfully
-                ProcessSendEmail::dispatch('hodanhnhan1166@gmail.com');
-                
+                ProcessSendEmail::dispatch('hodanhnhan1166@gmail.com', 'create');
+
                 return redirect('/user')->with('message', 'Post has been created!');
             }
         } catch (Exception $e) {
@@ -87,13 +91,15 @@ class UserPostController extends Controller
     public function editPost($id)
     {
         $post = Post::findOrFail($id);
-        return view('admin.admin-post', ['post' => $post]);
+        return view('user.user-post', ['post' => $post]);
     }
 
     public function updatePost(Request $request, $id)
     {
         $post = Post::findOrFail($id);
-
+        //save old_post to post_temp
+        event(new PostProcessed($post, auth()->user()));
+        
         $post->title = $request->input('title');
         $post->content = $request->input('content');
         $post->tags = $request->input('tag');
@@ -106,9 +112,9 @@ class UserPostController extends Controller
             $imageUrl = 'images/' . $imageName;
             $post->image = $imageUrl;
         }
-
+        ProcessSendEmail::dispatch('hodanhnhan1166@gmail.com', 'update');
         $post->save();
 
-        return redirect('/admin')->with('message', 'Post has been updated!');
+        return redirect('/user')->with('message', 'Post has been updated!');
     }
 }

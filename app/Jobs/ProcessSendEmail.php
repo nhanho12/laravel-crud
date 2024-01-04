@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\MailNotification;
 use App\Mail\MailPostCreated;
 use App\Models\Post;
 use Carbon\Carbon;
@@ -19,16 +20,19 @@ class ProcessSendEmail implements ShouldQueue
     use Dispatchable, InteractsWithQueue, SerializesModels;
 
     protected $recipientEmail;
+    protected $action;
 
-    public function __construct($recipientEmail)
+    public function __construct($recipientEmail, $action)
     {
         $this->recipientEmail = $recipientEmail;
+        $this->action = $action;
     }
 
     public function handle()
     {
         try {
-            Mail::mailer('mailgun')->to($this->recipientEmail)->queue(new MailPostCreated());
+            Mail::mailer('mailgun')->to($this->recipientEmail)
+                ->send(new MailNotification($this->action));
         } catch (\Exception $e) {
             Log::error('Worker failed: ' . $e->getMessage());
         }

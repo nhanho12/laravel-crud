@@ -18,24 +18,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //get homepage UI
-Route::get('/', function () {
-    // return view('common.mail-post-created');
-});
+// Route::get('/', function () {
+//     // return view('common.mail-post-created');
+// });
 
-//get Login UI
+// //get Login UI
 Route::get('/login', function () {
     return view('auth/login');
 })->name('login');
-//handle login
+// //handle login
 Route::post('/login', [LoginController::class, 'handleFormLogin'])->name('form-login');
-//handle logout
+// //handle logout
 Route::get('/logout', [LoginController::class, 'handleFormLogout'])->name('logout');
 
-//get Register UI
+// //get Register UI
 Route::get('/register', function () {
     return view('auth/register');
 })->name('register');
-//handle register 
+// //handle register 
 Route::post('/register', [RegisterController::class, 'handleFormRegister'])->name('form-register');
 
 Route::prefix('/admin')->middleware(['admin'])->group(function () {
@@ -61,9 +61,9 @@ Route::prefix('/user')->group(function () {
     Route::post('/create-post', [UserPostController::class, 'createPost'])->name('user-create-post');
 
     //delete post by ID 
-    Route::get('/delete-post/{id}', [PostController::class, 'deletePost'])->name('user-delete-post');
+    Route::get('/delete-post/{id}', [UserPostController::class, 'deletePost'])->name('user-delete-post');
 
     //edit and update by ID
-    Route::get('/edit-post/{id}', [PostController::class, 'editPost'])->name('user-edit-post');
-    Route::post('/update-post/{id}', [PostController::class, 'updatePost'])->name('user-update-post');
+    Route::get('/edit-post/{id}', [UserPostController::class, 'editPost'])->name('user-edit-post');
+    Route::post('/update-post/{id}', [UserPostController::class, 'updatePost'])->name('user-update-post');
 });
